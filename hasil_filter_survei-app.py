@@ -8,12 +8,15 @@ st.title("📊 Dashboard Survei Pendidikan Fisika")
 st.subheader("Visualisasi Data 100 Responden")
 
 # =====================================================
-# LOAD DATA (HEADER ADA DI BARIS KE-2 EXCEL)
+# LOAD DATA
 # =====================================================
-df = pd.read_excel("survei_pendidikan_fisika.xlsx", header=1)
+df = pd.read_excel("survei_pendidikan_fisika.xlsx")
 
-# Bersihkan spasi tersembunyi pada nama kolom
+# Bersihkan nama kolom (hapus spasi dan rapikan)
 df.columns = df.columns.str.strip()
+
+# Cek nama kolom (untuk debugging kalau masih error)
+st.write("Nama Kolom Terbaca:", df.columns)
 
 # =====================================================
 # SIDEBAR FILTER
@@ -52,41 +55,25 @@ st.divider()
 # VISUALISASI
 # =====================================================
 
-# Grafik Jenis Kelamin
-fig_jk = px.histogram(
-    df_filtered,
-    x="JK",
-    title="Distribusi Jenis Kelamin",
-)
-
+fig_jk = px.histogram(df_filtered, x="JK", title="Distribusi Jenis Kelamin")
 st.plotly_chart(fig_jk, use_container_width=True)
 
-# Grafik Pendidikan
-fig_pendidikan = px.histogram(
-    df_filtered,
-    x="Pendidikan",
-    title="Distribusi Pendidikan",
-)
-
+fig_pendidikan = px.histogram(df_filtered, x="Pendidikan", title="Distribusi Pendidikan")
 st.plotly_chart(fig_pendidikan, use_container_width=True)
 
-# Grafik Nilai berdasarkan Metode
 fig_metode = px.box(
     df_filtered,
     x="Metode",
     y="Nilai",
-    title="Perbandingan Nilai Berdasarkan Metode Pembelajaran",
+    title="Perbandingan Nilai Berdasarkan Metode Pembelajaran"
 )
-
 st.plotly_chart(fig_metode, use_container_width=True)
 
-# Scatter Minat vs Nilai
 fig_scatter = px.scatter(
     df_filtered,
     x="Minat",
     y="Nilai",
     color="JK",
-    title="Hubungan Minat dengan Nilai",
+    title="Hubungan Minat dengan Nilai"
 )
-
 st.plotly_chart(fig_scatter, use_container_width=True)
