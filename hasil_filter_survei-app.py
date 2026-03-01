@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import numpy as np
+import io
 
 # =====================================================
 # KONFIGURASI HALAMAN
@@ -15,9 +16,13 @@ st.title("📊 Dashboard Survei Pendidikan Fisika")
 st.markdown("Visualisasi Data 100 Responden")
 
 # =====================================================
-# LOAD DATA
+# LOAD DATA (VERSI AMAN)
 # =====================================================
-df = pd.read_csv("survey_pendidikan_fisika.csv")
+try:
+    df = pd.read_excel("survey_pendidikan_fisika.xlsx")
+except FileNotFoundError:
+    st.error("File survey_pendidikan_fisika.xlsx tidak ditemukan di repository.")
+    st.stop()
 
 # =====================================================
 # SIDEBAR FILTER
@@ -76,8 +81,7 @@ fig1 = px.scatter(
     x="Minat",
     y="Nilai",
     color="JK",
-    trendline="ols",
-    title="Minat vs Nilai UAS"
+    trendline="ols"
 )
 
 st.plotly_chart(fig1, use_container_width=True)
@@ -92,22 +96,20 @@ fig2 = px.scatter(
     x="Jam_Belajar",
     y="Nilai",
     color="Pendidikan",
-    trendline="ols",
-    title="Jam Belajar vs Nilai"
+    trendline="ols"
 )
 
 st.plotly_chart(fig2, use_container_width=True)
 
 # =====================================================
-# GRAFIK 3: DISTRIBUSI METODE FAVORIT
+# GRAFIK 3: DISTRIBUSI METODE
 # =====================================================
-st.subheader("📊 Distribusi Metode Pembelajaran Favorit")
+st.subheader("📊 Distribusi Metode Pembelajaran")
 
 fig3 = px.histogram(
     df,
     x="Metode",
-    color="Metode",
-    title="Distribusi Metode Favorit"
+    color="Metode"
 )
 
 st.plotly_chart(fig3, use_container_width=True)
@@ -117,11 +119,14 @@ st.plotly_chart(fig3, use_container_width=True)
 # =====================================================
 st.subheader("📌 Analisis Korelasi")
 
-corr_minat = np.corrcoef(df["Minat"], df["Nilai"])[0,1]
-corr_jam = np.corrcoef(df["Jam_Belajar"], df["Nilai"])[0,1]
+if len(df) > 1:
+    corr_minat = np.corrcoef(df["Minat"], df["Nilai"])[0,1]
+    corr_jam = np.corrcoef(df["Jam_Belajar"], df["Nilai"])[0,1]
 
-st.write(f"Korelasi Minat dan Nilai: **{round(corr_minat,3)}**")
-st.write(f"Korelasi Jam Belajar dan Nilai: **{round(corr_jam,3)}**")
+    st.write(f"Korelasi Minat dan Nilai: **{round(corr_minat,3)}**")
+    st.write(f"Korelasi Jam Belajar dan Nilai: **{round(corr_jam,3)}**")
+else:
+    st.warning("Data tidak cukup untuk menghitung korelasi.")
 
 # =====================================================
 # HEATMAP KORELASI
@@ -133,13 +138,15 @@ corr_matrix = numeric_df.corr()
 
 fig4 = px.imshow(
     corr_matrix,
-    text_auto=True,
-    title="Matriks Korelasi"
+    text_auto=True
 )
 
 st.plotly_chart(fig4, use_container_width=True)
 
-import io
+# =====================================================
+# DOWNLOAD EXCEL
+# =====================================================
+st.subheader("⬇ Download Data")
 
 buffer = io.BytesIO()
 df.to_excel(buffer, index=False, engine='xlsxwriter')
