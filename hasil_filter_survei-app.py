@@ -139,15 +139,15 @@ fig4 = px.imshow(
 
 st.plotly_chart(fig4, use_container_width=True)
 
-# =====================================================
-# DOWNLOAD DATA
-# =====================================================
-st.subheader("⬇ Download Data")
+import io
 
-csv = df.to_csv(index=False).encode('utf-8')
+buffer = io.BytesIO()
+df.to_excel(buffer, index=False, engine='xlsxwriter')
+buffer.seek(0)
+
 st.download_button(
-    label="Download Data CSV",
-    data=csv,
-    file_name="hasil_filter_survei.csv",
-    mime="text/csv"
+    label="Download Data Excel",
+    data=buffer,
+    file_name="hasil_filter_survei.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 )
