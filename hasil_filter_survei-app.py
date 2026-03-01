@@ -5,7 +5,7 @@ import plotly.express as px
 st.set_page_config(page_title="Dashboard Survei Pendidikan Fisika", layout="wide")
 
 st.title("📊 Dashboard Survei Pendidikan Fisika")
-st.markdown("### Visualisasi dan Analisis Data 100 Responden")
+st.markdown("### Visualisasi dan Analisis Data Responden")
 
 # =====================================================
 # LOAD DATA
@@ -135,3 +135,4 @@ st.info(
 )
 
 st.caption("Dashboard dibuat menggunakan Streamlit dan Plotly Express.")
+
